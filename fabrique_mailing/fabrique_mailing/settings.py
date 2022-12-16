@@ -10,6 +10,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 CSRF_ALLOWED_ORIGINS = []
 
+AUTH_USER_MODEL = 'users.User'
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -20,8 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_yasg',
+    'phonenumber_field',
 
     'mailings',
+    'users',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -92,3 +98,6 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PHONENUMBER_DEFAULT_REGION = 'RU'
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
