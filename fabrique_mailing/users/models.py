@@ -1,10 +1,11 @@
-from core.utils import parse_operator_code
-from core.validators import validate_phone_number
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from timezone_field import TimeZoneField
+
+from core.utils import parse_operator_code
+from core.validators import validate_phone_number
 
 
 class Filter(models.Model):
