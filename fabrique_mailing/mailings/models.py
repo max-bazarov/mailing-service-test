@@ -18,23 +18,22 @@ class Mailing(models.Model):
         db_table = 'mailing'
 
     def __str__(self):
-        return (f'{self.message[:MESSAGE_PREVIEW]}'
-                ' {self.start_at}-{self.end_at}')
+        return (f'{self.message[:MESSAGE_PREVIEW]} '
+                f'{self.start_at}-{self.end_at}')
 
 
 class Message(models.Model):
     class Status(models.TextChoices):
         NOT_SENT = 'not_sent'
         SENT = 'sent'
-        DELIVERED = 'delivered'
         FAILED = 'failed'
 
-    mailing = models.OneToOneField(
+    mailing = models.ForeignKey(
         Mailing,
         on_delete=models.CASCADE,
         related_name='messages'
     )
-    user = models.ForeignKey(
+    client = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='messages'
@@ -50,4 +49,4 @@ class Message(models.Model):
         db_table = 'message'
 
     def __str__(self):
-        return f'{self.text[:MESSAGE_PREVIEW]}'
+        return f'{self.mailing} {self.client} {self.status}'
