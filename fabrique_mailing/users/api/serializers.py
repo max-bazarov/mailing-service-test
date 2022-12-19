@@ -1,8 +1,9 @@
-from core.utils import parse_operator_code
-from core.validators import validate_phone_number
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from timezone_field.rest_framework import TimeZoneSerializerField
+
+from core.utils import parse_operator_code
+from core.validators import validate_phone_number
 from users.models import OperatorCode, Tag
 
 Client = get_user_model()
