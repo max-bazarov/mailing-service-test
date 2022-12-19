@@ -1,7 +1,6 @@
-from rest_framework.viewsets import ModelViewSet
-
 from mailings.api.serializers import MailingSerializer
 from mailings.models import Mailing
+from rest_framework.viewsets import ModelViewSet
 
 
 class MailingViewSet(ModelViewSet):
