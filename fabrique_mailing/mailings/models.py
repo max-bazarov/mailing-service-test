@@ -1,17 +1,17 @@
+from django.conf import settings
 from django.db import models
-
 
 MESSAGE_PREVIEW = 10
 
 
 class Mailing(models.Model):
-    start_at = models.DateTimeField(auto_now_add=True)
+    start_at = models.DateTimeField()
     end_at = models.DateTimeField()
     message = models.TextField()
-    tags = models.ManyToManyField(
-        'users.Tag',
+    filter = models.ForeignKey(
+        'users.Filter',
         related_name='mailings',
-        through='mailings.MailingTag'
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -20,23 +20,6 @@ class Mailing(models.Model):
     def __str__(self):
         return (f'{self.message[:MESSAGE_PREVIEW]}'
                 ' {self.start_at}-{self.end_at}')
-
-
-class MailingTag(models.Model):
-    mailing = models.ForeignKey(
-        Mailing,
-        on_delete=models.CASCADE,
-    )
-    tag = models.ForeignKey(
-        'users.Tag',
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        db_table = 'mailing_tag'
-
-    def __str__(self):
-        return f'{self.mailing} {self.tag}'
 
 
 class Message(models.Model):
@@ -49,10 +32,10 @@ class Message(models.Model):
     mailing = models.OneToOneField(
         Mailing,
         on_delete=models.CASCADE,
-        related_name='message'
+        related_name='messages'
     )
     user = models.ForeignKey(
-        'users.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='messages'
     )
