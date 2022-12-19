@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+    redis:
+        image: redis
+        restart: always
+    db:
+        image: postgres:13.0-alpine
+        restart: always
+        volumes:
+            - /var/lib/postgresql/data/
+        env_file:
+            - ./.env
+    backend:
+        build: ../fabrique_mailing
+        restart: always
+        volumes:
+            - static_value:/app/static/
+        depends_on:
+            - db
+        env_file:
+            - ./.env
+    nginx:
+        image: nginx:1.21.3-alpine
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - static_value:/var/html/static/
+        depends_on:
+            - backend
+    worker:
+        build: ../fabrique_mailing
+        restart: always
+        depends_on:
+            - db
+            - redis
+        env_file:
+            - ./.env
+        command: ['celery', '-A', 'fabrique_mailing', 'worker', '-l', 'info']
+
+volumes:
+    static_value:
