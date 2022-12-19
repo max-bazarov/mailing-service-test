@@ -1,15 +1,20 @@
+import os
 from pathlib import Path
+
+import dotenv
+
+dotenv.load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-xw1qv97es#7_7vh^w^_()c%_73=1d-9a8xux14c0(fxueeu9^t'
+SECRET_KEY = os.getenv('SECRET_KEY', default='1234')
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_ALLOWED_ORIGINS = []
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost', ]
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 AUTH_USER_MODEL = 'users.Client'
 
 
@@ -33,7 +38,7 @@ INSTALLED_APPS = [
 
 
 REST_FRAMEWORK = {
-    'DATETIME_FORMAT': '%d.%m.%Y %H:%M',
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M:%S',
     'DATETIME_INPUT_FORMATS': ['%d.%m.%Y %H:%M'],
 }
 
@@ -71,8 +76,12 @@ WSGI_APPLICATION = 'fabrique_mailing.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
 
@@ -95,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -109,3 +118,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PHONENUMBER_DEFAULT_REGION = 'RU'
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
+
+REDIS_HOST = 'redis'
+REDIS_PORT = os.getenv('REDIS_PORT', default=6379)
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
