@@ -1,6 +1,7 @@
 from django.urls import include, path
-from mailings.api.views import MailingViewSet
 from rest_framework.routers import DefaultRouter
+
+from mailings.api.views import MailingViewSet
 
 router = DefaultRouter()
 router.register(r'mailings', MailingViewSet, basename='mailings')
