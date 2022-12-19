@@ -10,7 +10,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 CSRF_ALLOWED_ORIGINS = []
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.Client'
 
 
 INSTALLED_APPS = [
@@ -24,11 +24,19 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'phonenumber_field',
+    'timezone_field',
 
     'mailings',
     'users',
     'core',
 ]
+
+
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M',
+    'DATETIME_INPUT_FORMATS': ['%d.%m.%Y %H:%M'],
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
