@@ -4,9 +4,12 @@ from rest_framework import serializers
 
 from mailings.models import Mailing, Message
 from users.models import Filter, OperatorCode, Tag
+from users.api.serializers import ClientSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    client = ClientSerializer()
+
     class Meta:
         model = Message
         fields = ('id', 'status', 'sent_at', 'client')
