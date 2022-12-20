@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 
 MESSAGE_PREVIEW = 10
@@ -34,7 +33,7 @@ class Message(models.Model):
         related_name='messages'
     )
     client = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'users.Client',
         on_delete=models.CASCADE,
         related_name='messages'
     )
