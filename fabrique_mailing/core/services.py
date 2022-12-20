@@ -46,8 +46,8 @@ class MailingService:
 
     def get_filtered_clients(self) -> QuerySet:
         filter = self.mailing.filter
-        tag = filter.tag
-        operator_code = filter.operator_code
+        tag = filter.tag.id
+        operator_code = filter.operator_code.id
         clients = Client.objects.filter(operator_code=operator_code, tag=tag)
 
         return clients
@@ -69,16 +69,19 @@ class MailingService:
         except Exception as error:
             log.error(error, exc_info=True)
             message.status = Message.Status.FAILED
+            message.save()
             log.info(f'Message {message.id} failed to send')
             return None
 
         if response.status_code != 200:
             log.error(ResponseStatusCodeError('Status code is not 200'))
             message.status = Message.Status.FAILED
+            message.save()
             log.info(f'Message {message.id} failed to send')
             return None
 
         message.status = Message.Status.SENT
+        message.save()
         log.info(f'Message {message.id} sent successfully')
 
         return message
