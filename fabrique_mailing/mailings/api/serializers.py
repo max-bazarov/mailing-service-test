@@ -2,8 +2,29 @@ import datetime
 
 from rest_framework import serializers
 
-from mailings.models import Mailing
+from mailings.models import Mailing, Message
 from users.models import Filter, OperatorCode, Tag
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('id', 'status', 'sent_at', 'client')
+
+
+class MessageCountSerializer(serializers.Serializer):
+    not_sent = serializers.SerializerMethodField()
+    sent = serializers.SerializerMethodField() 
+    failed = serializers.SerializerMethodField()
+
+    def get_not_sent(self, obj):
+        return obj.messages.filter(status=Message.Status.NOT_SENT).count()
+
+    def get_sent(self, obj):
+        return obj.messages.filter(status=Message.Status.SENT).count()
+
+    def get_failed(self, obj):
+        return obj.messages.filter(status=Message.Status.FAILED).count()
 
 
 class FilterSerializer(serializers.ModelSerializer):
@@ -23,10 +44,11 @@ class FilterSerializer(serializers.ModelSerializer):
 
 class MailingSerializer(serializers.ModelSerializer):
     filter = FilterSerializer()
+    message_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Mailing
-        fields = ('message', 'start_at', 'end_at', 'filter')
+        fields = ('message', 'start_at', 'end_at', 'filter', 'message_count')
 
     def validate_start_at(self, data):
         if data.timestamp() < datetime.datetime.now().timestamp():
@@ -41,6 +63,9 @@ class MailingSerializer(serializers.ModelSerializer):
                 'End time must be in the future'
             )
         return data
+
+    def get_message_count(self, obj):
+        return MessageCountSerializer(obj).data
 
     def create(self, validated_data):
         filter_data = validated_data.pop('filter')
