@@ -45,9 +45,9 @@ def add_message_to_queue(client_id: int,
     mailing_service = MailingService(mailing)
     message, _ = Message.objects.get_or_create(
             mailing=mailing,
-            client=client,
-            status=Message.Status.NOT_SENT
-        )
+            client=client
+    )
+    message.status = Message.Status.NOT_SENT
     log.info(f'Add message to queue: {message.id}')
 
     result = mailing_service.send_message(message)
